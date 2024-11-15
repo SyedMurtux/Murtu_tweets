@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
+import altair as alt
 
 # Use seaborn theme for better visuals
 sns.set_theme()
@@ -30,37 +30,38 @@ if uploaded_file is not None:
     sentiment_counts = tweets['airline_sentiment'].value_counts()
     st.write(sentiment_counts)
     
-    # Bar chart for airline sentiment
+    # Bar chart for airline sentiment using Altair
     st.write("### Airline Sentiment Bar Chart")
-    fig, ax = plt.subplots()
-    ax.bar(sentiment_counts.index, sentiment_counts, color='skyblue')
-    ax.set_title("Airline Sentiment Bar Chart")
-    st.pyplot(fig)
+    bar_chart = alt.Chart(sentiment_counts.reset_index()).mark_bar(color='skyblue').encode(
+        x=alt.X('index:N', title='Sentiment'),
+        y=alt.Y('airline_sentiment:Q', title='Count')
+    ).properties(
+        title='Airline Sentiment Bar Chart'
+    )
+    st.altair_chart(bar_chart, use_container_width=True)
     
-    # Pie chart for airline sentiment
+    # Pie chart for airline sentiment using Altair
     st.write("### Airline Sentiment Pie Chart")
-    fig, ax = plt.subplots()
-    sentiment_counts.plot(kind='pie', autopct='%1.1f%%', ax=ax, colors=sns.color_palette('pastel'))
-    ax.set_ylabel('')
-    ax.set_title("Airline Sentiment Distribution")
-    st.pyplot(fig)
+    pie_chart = alt.Chart(sentiment_counts.reset_index()).mark_arc().encode(
+        theta=alt.Theta(field="airline_sentiment", type="quantitative"),
+        color=alt.Color(field="index", type="nominal", scale=alt.Scale(scheme='pastel'))
+    ).properties(
+        title='Airline Sentiment Distribution'
+    )
+    st.altair_chart(pie_chart, use_container_width=True)
 
-    # Bar chart for tweets count by airlines
+    # Bar chart for tweets count by airlines using Altair
     st.write("### Tweets Count by Airline")
     airline_counts = tweets['airline'].value_counts()
-    sorted_airline_counts = airline_counts.sort_values(ascending=False)
-    fig, ax = plt.subplots(figsize=(12, 6))
-    colors = sns.color_palette('viridis', len(sorted_airline_counts))
-    bars = ax.bar(sorted_airline_counts.index, sorted_airline_counts.values, color=colors)
-    ax.set_xlabel("Airlines")
-    ax.set_ylabel("Number of Tweets")
-    ax.set_title("Tweets Count by Airline")
-    ax.tick_params(axis='x', rotation=45)
-    plt.tight_layout()
-    for bar in bars:
-        yval = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2, yval + 5, yval, ha='center', va='bottom')
-    st.pyplot(fig)
+    sorted_airline_counts = airline_counts.sort_values(ascending=False).reset_index()
+    bar_chart_airlines = alt.Chart(sorted_airline_counts).mark_bar().encode(
+        x=alt.X('index:N', title='Airline', sort='-y'),
+        y=alt.Y('airline:Q', title='Number of Tweets'),
+        color=alt.Color(field='index', type='nominal', scale=alt.Scale(scheme='viridis'))
+    ).properties(
+        title='Tweets Count by Airline'
+    )
+    st.altair_chart(bar_chart_airlines, use_container_width=True)
 
 else:
     st.write("Please upload a CSV file to continue.")
