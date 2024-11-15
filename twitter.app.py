@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Use seaborn theme for better visuals
+sns.set_theme()
 
 # Title for the Streamlit app
 st.title('Twitter Airline Sentiment Analysis')
@@ -29,14 +33,14 @@ if uploaded_file is not None:
     # Bar chart for airline sentiment
     st.write("### Airline Sentiment Bar Chart")
     fig, ax = plt.subplots()
-    ax.bar(sentiment_counts.index, sentiment_counts)
+    ax.bar(sentiment_counts.index, sentiment_counts, color='skyblue')
     ax.set_title("Airline Sentiment Bar Chart")
     st.pyplot(fig)
     
     # Pie chart for airline sentiment
     st.write("### Airline Sentiment Pie Chart")
     fig, ax = plt.subplots()
-    sentiment_counts.plot(kind='pie', autopct='%1.1f%%', ax=ax)
+    sentiment_counts.plot(kind='pie', autopct='%1.1f%%', ax=ax, colors=sns.color_palette('pastel'))
     ax.set_ylabel('')
     ax.set_title("Airline Sentiment Distribution")
     st.pyplot(fig)
@@ -46,8 +50,8 @@ if uploaded_file is not None:
     airline_counts = tweets['airline'].value_counts()
     sorted_airline_counts = airline_counts.sort_values(ascending=False)
     fig, ax = plt.subplots(figsize=(12, 6))
-    colors = plt.cm.get_cmap('viridis', len(sorted_airline_counts))
-    bars = ax.bar(sorted_airline_counts.index, sorted_airline_counts.values, color=colors(range(len(sorted_airline_counts))))
+    colors = sns.color_palette('viridis', len(sorted_airline_counts))
+    bars = ax.bar(sorted_airline_counts.index, sorted_airline_counts.values, color=colors)
     ax.set_xlabel("Airlines")
     ax.set_ylabel("Number of Tweets")
     ax.set_title("Tweets Count by Airline")
