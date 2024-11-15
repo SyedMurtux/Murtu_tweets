@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Load the tweets data
 tweets = pd.read_csv('https://raw.githubusercontent.com/SyedMurtux/Murtu_tweets/refs/heads/main/Tweets.csv')
@@ -32,8 +33,8 @@ airline_counts = tweets['airline'].value_counts()
 sorted_airline_counts = airline_counts.sort_values(ascending=False)
 
 fig2, ax2 = plt.subplots(figsize=(12, 6))
-colors = plt.cm.get_cmap('viridis', len(sorted_airline_counts))  # Use a colormap for variety
-bars = ax2.bar(sorted_airline_counts.index, sorted_airline_counts.values, color=colors(range(len(sorted_airline_counts))))
+colors = plt.cm.viridis(np.linspace(0, 1, len(sorted_airline_counts)))  # Use a colormap for variety
+bars = ax2.bar(sorted_airline_counts.index, sorted_airline_counts.values, color=colors)
 
 # Customize the chart
 ax2.set_xlabel("Airlines")
