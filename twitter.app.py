@@ -41,5 +41,22 @@ if uploaded_file is not None:
     ax.set_title("Airline Sentiment Distribution")
     st.pyplot(fig)
 
+    # Bar chart for tweets count by airlines
+    st.write("### Tweets Count by Airline")
+    airline_counts = tweets['airline'].value_counts()
+    sorted_airline_counts = airline_counts.sort_values(ascending=False)
+    fig, ax = plt.subplots(figsize=(12, 6))
+    colors = plt.cm.get_cmap('viridis', len(sorted_airline_counts))
+    bars = ax.bar(sorted_airline_counts.index, sorted_airline_counts.values, color=colors(range(len(sorted_airline_counts))))
+    ax.set_xlabel("Airlines")
+    ax.set_ylabel("Number of Tweets")
+    ax.set_title("Tweets Count by Airline")
+    ax.tick_params(axis='x', rotation=45)
+    plt.tight_layout()
+    for bar in bars:
+        yval = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2, yval + 5, yval, ha='center', va='bottom')
+    st.pyplot(fig)
+
 else:
     st.write("Please upload a CSV file to continue.")
